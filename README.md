@@ -58,15 +58,7 @@ If using Shopify Theme Kit for development, follow the [setup instructions](http
 
 Javascript work is done in the ``_js`` directory.  The gulp scripts task minifies and checks files for errors before exporting them to the assets directory.  We are using jshint for error checking, [see the docs](http://jshint.com/docs/) for more info on how to use it.
 
-Scss work is done in the ``_scss`` directory.  Right now there is a single entry point for the stylesheet called ``app.scss.liquid``. The gulp styles task inlines all ``@import`` directives and exports a single scss file to the assets directory.  Due to the way Shopify compiles scss, we have to use a css inliner for imported files which means we have to use the native css ``@import`` syntax _not_ the scss one.
-
-```scss
-// Do this
-@import url("theme/_pages.scss");
-
-// Not this
-@import "theme/pages"
-```
+Scss work is done in the ``_scss`` directory.  Right now there is a single entry point for the stylesheet called ``theme.scss``.  The gulp watch tasks will watch for changes to any file in this directory, compile to `theme.css` and export to the assets directory.  Shopify uses an older SCSS compiler version which doesn't support newer features like CSS variables.  To avoid this, we have to compile down to CSS *not* SCSS and avoid any server side compilation.  This also means we can't include theme assets in our SCSS.  To get around this, include any asset dependent styles in the layout liquid template.  See `snippets/font-face.liquid` for an example.
 
 ### Theme Features
 
@@ -76,9 +68,6 @@ There are a few things about the theme to be aware of in order to get the most o
 
 To add favicons, see the snippet ``favicon.liquid``.  There are 4 icon sizes that need to be generated and added to the assets folder.  See [realfavicongenerator.net](http://realfavicongenerator.net) to create these.
 
-##### Font Icons
-
-The site currently uses the Font Awesome font icon library.  To keep the CSS file as lightweight as possible, comment out unused icon rules in ``_scss/font-awesome/_icons.scss``.
 
 ##### Sections
 
