@@ -41,6 +41,18 @@
         "gift_card": {{ item.gift_card }},
         "url": {{ item.url | json }},
         "image": {{ item.image | json }},
+        "imageV2": {
+          {% for product_image in item.product.images %}
+            {% if item.image == product_image %}
+              "url": {{ product_image.src | json }},
+              "height": {{ product_image.height }},
+              "width": {{ product_image.width }},
+              "alt": {{ product_image.alt | json }},
+              "id": {{ product_image.id | json }}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+        },        
         "handle": {{ product.handle | json }},
         "requires_shipping": {{ item.requires_shipping }},
         "product": {% include 'product-json', product: product %},

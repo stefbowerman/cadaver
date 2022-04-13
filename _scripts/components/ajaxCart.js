@@ -32,25 +32,35 @@ export default class AJAXCart {
     this.isOpen = false
     this.hasBeenRendered = false
 
+    this.callbacks = {
+      bodyToggleClick: this.onToggleClick.bind(this),
+      bodyCloseClick: this.onCloseClick.bind(this)
+    }      
+
     this.$el = $(el)
     this.$body = $(selectors.body, this.$el)
     this.$totalPrice = $(selectors.totalPrice, this.$el)
     this.$bodyTemplate = $(selectors.bodyTemplate)
 
     this.$el.on(events.CLICK, selectors.itemRemove, this.onItemRemoveClick.bind(this))
-    $body.on(events.CLICK, selectors.toggle, this.onToggleClick.bind(this))
-    $body.on(events.CLICK, selectors.close, this.onCloseClick.bind(this))
+    $body.on(events.CLICK, selectors.toggle, this.callbacks.bodyToggleClick)
+    $body.on(events.CLICK, selectors.close, this.callbacks.bodyCloseClick)
+  }
+
+  destroy() {
+    $body.on(events.CLICK, selectors.toggle, this.callbacks.bodyToggleClick)
+    $body.on(events.CLICK, selectors.close, this.callbacks.bodyCloseClick)
   }
 
   bodyTemplate(cart) {
     let html = ''
 
     if (cart.items) {
-      html = $.map(cart.items, ({ key, quantity, image, product_title, price, variant_title }) => {
+      html = $.map(cart.items, ({ key, quantity, imageV2, product_title, price, variant_title }) => {
         return `
           <div class="ajax-cart__item" data-key="${key}" data-qty="${quantity}" data-item>
             <div class="ajax-cart__item-image">
-              <img src="${image}" />
+              <img src="${imageV2.url}" />
             </div>
             <div class="ajax-cart__item-info">
               <h4>${product_title}</h4>

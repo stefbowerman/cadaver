@@ -14,7 +14,13 @@ export default class FadeTransition extends Highway.Transition {
   }
 
   out({ from, trigger, done }) {
-    $(from).fadeOut(() => done());
+    $(from).fadeOut({
+      duration: 200,
+      complete: () => {
+        window.scrollTo && window.scrollTo(0, 0);
+        done()
+      }
+    })
   }
 }
 

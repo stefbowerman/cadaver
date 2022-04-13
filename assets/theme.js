@@ -47,16 +47,26 @@ var AJAXCart = /*#__PURE__*/function () {
 
     this.isOpen = false;
     this.hasBeenRendered = false;
+    this.callbacks = {
+      bodyToggleClick: this.onToggleClick.bind(this),
+      bodyCloseClick: this.onCloseClick.bind(this)
+    };
     this.$el = (0, _jquery.default)(el);
     this.$body = (0, _jquery.default)(selectors.body, this.$el);
     this.$totalPrice = (0, _jquery.default)(selectors.totalPrice, this.$el);
     this.$bodyTemplate = (0, _jquery.default)(selectors.bodyTemplate);
     this.$el.on(events.CLICK, selectors.itemRemove, this.onItemRemoveClick.bind(this));
-    $body.on(events.CLICK, selectors.toggle, this.onToggleClick.bind(this));
-    $body.on(events.CLICK, selectors.close, this.onCloseClick.bind(this));
+    $body.on(events.CLICK, selectors.toggle, this.callbacks.bodyToggleClick);
+    $body.on(events.CLICK, selectors.close, this.callbacks.bodyCloseClick);
   }
 
   _createClass(AJAXCart, [{
+    key: "destroy",
+    value: function destroy() {
+      $body.on(events.CLICK, selectors.toggle, this.callbacks.bodyToggleClick);
+      $body.on(events.CLICK, selectors.close, this.callbacks.bodyCloseClick);
+    }
+  }, {
     key: "bodyTemplate",
     value: function bodyTemplate(cart) {
       var html = '';
@@ -65,11 +75,11 @@ var AJAXCart = /*#__PURE__*/function () {
         html = _jquery.default.map(cart.items, function (_ref) {
           var key = _ref.key,
               quantity = _ref.quantity,
-              image = _ref.image,
+              imageV2 = _ref.imageV2,
               product_title = _ref.product_title,
               price = _ref.price,
               variant_title = _ref.variant_title;
-          return "\n          <div class=\"ajax-cart__item\" data-key=\"".concat(key, "\" data-qty=\"").concat(quantity, "\" data-item>\n            <div class=\"ajax-cart__item-image\">\n              <img src=\"").concat(image, "\" />\n            </div>\n            <div class=\"ajax-cart__item-info\">\n              <h4>").concat(product_title, "</h4>\n              <div>").concat(price, "</div>\n              <div>").concat(variant_title, "</div>\n              ").concat(quantity > 1 ? "<div>QTY ".concat(quantity, "</div>") : '', "\n              <a href=\"#\" class=\"btn\" data-item-remove>Remove</a>\n            </div>            \n          </div>\n        ");
+          return "\n          <div class=\"ajax-cart__item\" data-key=\"".concat(key, "\" data-qty=\"").concat(quantity, "\" data-item>\n            <div class=\"ajax-cart__item-image\">\n              <img src=\"").concat(imageV2.url, "\" />\n            </div>\n            <div class=\"ajax-cart__item-info\">\n              <h4>").concat(product_title, "</h4>\n              <div>").concat(price, "</div>\n              <div>").concat(variant_title, "</div>\n              ").concat(quantity > 1 ? "<div>QTY ".concat(quantity, "</div>") : '', "\n              <a href=\"#\" class=\"btn\" data-item-remove>Remove</a>\n            </div>            \n          </div>\n        ");
         }).join('');
       }
 
@@ -1168,6 +1178,7 @@ var formatCart = function formatCart(cart) {
   cart.total_price = (0, _currency.formatMoney)(cart.total_price, theme.moneyFormat);
   cart.items.map(function (item) {
     item.image = (0, _image.getSizedImageUrl)(item.image, '500x');
+    item.imageV2.url = (0, _image.getSizedImageUrl)(item.imageV2.url, '500x');
     item.price = (0, _currency.formatMoney)(item.price);
     item.multiple_quantities = item.quantity > 1; // Adjust the item's variant options to add "name" and "value" properties
 
@@ -2543,6 +2554,8 @@ var _ajaxFormManager = _interopRequireWildcard(require("../core/ajaxFormManager"
 
 var _cartAPI = require("../core/cartAPI");
 
+var _utils = require("../core/utils");
+
 var _ajaxCart = _interopRequireDefault(require("../components/ajaxCart"));
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
@@ -2601,7 +2614,12 @@ var AJAXCartSection = /*#__PURE__*/function (_BaseSection) {
     $window.on(_ajaxFormManager.events.ADD_SUCCESS, _this.callbacks.changeSuccess);
     $window.on(_ajaxFormManager.events.ADD_FAIL, _this.callbacks.changeFail);
     (0, _cartAPI.getCart)().then(function (cart) {
-      _this.ajaxCart.render(cart);
+      _this.ajaxCart.render(cart); // If redirected from the cart, show the ajax cart after a short delay
+
+
+      if ((0, _utils.getQueryParams)().cart) {
+        _this.open();
+      }
     });
     return _this;
   }
@@ -2628,9 +2646,10 @@ var AJAXCartSection = /*#__PURE__*/function (_BaseSection) {
     }
   }, {
     key: "onUnload",
-    value: function onUnload() {// this.ajaxCart.destroy()
-      // $window.off(events.ADD_SUCCESS, this.callbacks.changeSuccess)
-      // $window.off(events.ADD_FAIL, this.callbacks.changeFail)    
+    value: function onUnload() {
+      this.ajaxCart.destroy();
+      $window.off(_ajaxFormManager.events.ADD_SUCCESS, this.callbacks.changeSuccess);
+      $window.off(_ajaxFormManager.events.ADD_FAIL, this.callbacks.changeFail);
     }
   }]);
 
@@ -2639,7 +2658,7 @@ var AJAXCartSection = /*#__PURE__*/function (_BaseSection) {
 
 exports.default = AJAXCartSection;
 
-},{"../components/ajaxCart":1,"../core/ajaxFormManager":8,"../core/cartAPI":11,"./base":23,"jquery":30}],23:[function(require,module,exports){
+},{"../components/ajaxCart":1,"../core/ajaxFormManager":8,"../core/cartAPI":11,"../core/utils":15,"./base":23,"jquery":30}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3101,8 +3120,12 @@ var FadeTransition = /*#__PURE__*/function (_Highway$Transition) {
       var from = _ref2.from,
           trigger = _ref2.trigger,
           done = _ref2.done;
-      (0, _jquery.default)(from).fadeOut(function () {
-        return done();
+      (0, _jquery.default)(from).fadeOut({
+        duration: 200,
+        complete: function complete() {
+          window.scrollTo && window.scrollTo(0, 0);
+          done();
+        }
       });
     }
   }]);

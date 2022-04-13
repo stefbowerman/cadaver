@@ -2,6 +2,7 @@ import $ from 'jquery';
 import BaseSection from './base';
 import AJAXFormManager, { events } from '../core/ajaxFormManager'
 import { getCart } from '../core/cartAPI'
+import { getQueryParams } from '../core/utils'
 import AJAXCart from '../components/ajaxCart'
 
 const selectors = {
@@ -28,6 +29,11 @@ export default class AJAXCartSection extends BaseSection {
 
     getCart().then(cart => {
       this.ajaxCart.render(cart)
+
+      // If redirected from the cart, show the ajax cart after a short delay
+      if (getQueryParams().cart) {
+        this.open()
+      }        
     })
   }
 
@@ -48,8 +54,8 @@ export default class AJAXCartSection extends BaseSection {
   }
 
   onUnload() {
-    // this.ajaxCart.destroy()
-    // $window.off(events.ADD_SUCCESS, this.callbacks.changeSuccess)
-    // $window.off(events.ADD_FAIL, this.callbacks.changeFail)    
+    this.ajaxCart.destroy()
+    $window.off(events.ADD_SUCCESS, this.callbacks.changeSuccess)
+    $window.off(events.ADD_FAIL, this.callbacks.changeFail)    
   }
 }
