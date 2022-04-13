@@ -83,7 +83,6 @@ initializeBreakpoints();
   // Listen the `NAVIGATE_OUT` event
   // This event is sent everytime the `out()` method of a transition is run to hide a `data-router-view`
   highway.on('NAVIGATE_OUT', ({ from, trigger, location }) => {
-    window.scrollTo && window.scrollTo(0, 0);
     ajaxCart.close();
   });
 

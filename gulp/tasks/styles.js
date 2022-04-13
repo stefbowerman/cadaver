@@ -41,7 +41,7 @@ const stylePipeline = (src) => {
     })
     .pipe(postcss(postcssPlugins))
     .pipe(rename({
-      extname: '.scss.liquid'
+      extname: '.css'
     }))    
     .pipe(gulp.dest(paths.dest))
     .pipe(debug())

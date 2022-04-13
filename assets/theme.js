@@ -570,7 +570,7 @@ var Variants = /*#__PURE__*/function () {
   /**
    * Variant constructor
    *
-   * @param {object} options - Settings from `product.js`
+   * @param {object} options
    */
   function Variants(options) {
     _classCallCheck(this, Variants);
@@ -3047,7 +3047,6 @@ var TEMPLATE_REGEX = /(^|\s)template-\S+/g;
     var from = _ref2.from,
         trigger = _ref2.trigger,
         location = _ref2.location;
-    window.scrollTo && window.scrollTo(0, 0);
     ajaxCart.close();
   }); // Listen the `NAVIGATE_END` event
   // This event is sent everytime the `done()` method is called in the `in()` method of a transition

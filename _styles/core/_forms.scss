@@ -56,14 +56,6 @@
 }
 
 select.form-control {
-  background-position: right center;
-  background: {
-    image: url(#{'{{ "arrow-down.svg" | asset_url }}'});
-    repeat: no-repeat;
-    position: right 12px center;
-    color: transparent;
-    size: 12px auto;
-  }
   padding-right: 34px;
   padding-left: 10px;
   text-indent: 0.01px;
