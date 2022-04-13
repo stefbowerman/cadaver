@@ -1,15 +1,15 @@
 # Cadaver Theme
 
-Cadaver is a simplified Shopify theme, to be used as a "blank slate" starting point for theme developers.  When I say 'basic' I really mean it.  Bootstrap and Font Awesome are included to get you going quickly but neither are required.  Comment out all the things you don't need and save yourself the bloat.
+Cadaver is a simplified Shopify theme, to be used as a "blank slate" starting point for theme developers.
 
 My intention when starting this project was to create something with more features than [Skeleton](http://shopify.github.io/skeleton-theme/) but less overhead than [Timber](https://shopify.github.io/Timber/) or [Slate](https://github.com/Shopify/slate).  I also wanted something that I could clone and start developing immediately without having to tear out old code or feel constrained my pre-existing CSS. Out of the box this theme doesn't look like much, but the boilerplate code and defaults mean you should be able to make this look halfway decent with a few days of work.
 
 __Features:__
 - Minimal theme settings.
 - Minimal JS framework for utilizing Shopify sections.
+- [Highway.JS](https://highway.js.org/) built in for SPA like browsing experience
 - Commented code to teach you Liquid concepts in practice.
 - Gulp task to inline scss files allowing theme stylesheets to be broken up since Shopify doesn't support scss importing.
-- Bootstrap is included to take advantage of the grid.  File imports have been modified to work with gulp-cssimport (native SCSS import syntax not supported)
 - Supports the official [Shopify Theme Gem](https://github.com/Shopify/shopify_theme) for easy development
 
 ### Project Structure
@@ -17,7 +17,7 @@ __Features:__
 ├── _js
 │   └── Working javascript files.  Compiles and minfies with gulp and exports to assets directory
 ├── _scss
-│   └── Working scss files.  Compiles with gulp and exports to assets directory
+│   └── Working scss files.  Compiles to css with gulp and exports to assets directory
 ├── assets
 │   └── Javascript, CSS, and theme images
 ├── config
@@ -79,10 +79,6 @@ To add favicons, see the snippet ``favicon.liquid``.  There are 4 icon sizes tha
 ##### Font Icons
 
 The site currently uses the Font Awesome font icon library.  To keep the CSS file as lightweight as possible, comment out unused icon rules in ``_scss/font-awesome/_icons.scss``.
-
-##### Open Graph Images
-
-All open graph tags are contained in the snippet ``open-graph-tags.liquid``.  OG images are generated from the store logo, product page images or blog images.  To add default share images, generate them following the [best practice guidelines](https://developers.facebook.com/docs/sharing/best-practices#images) and either hard code them in the snippet, or create theme settings for them.
 
 ##### Sections
 

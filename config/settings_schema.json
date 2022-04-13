@@ -2,9 +2,10 @@
   {
     "name": "theme_info",
     "theme_name": "Cadaver",
-    "theme_version": "1.0.0",
+    "theme_version": "2.0.0",
     "theme_author": "Stefan Bowerman",
-    "theme_support_url": "https://github.com/stefbowerman/cadaver"
+    "theme_support_url": "https://github.com/stefbowerman/cadaver",
+    "theme_documentation_url": "https://github.com/stefbowerman/cadaver"
   },
   {
     "name": "Favicon",
