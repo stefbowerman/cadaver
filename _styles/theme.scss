@@ -2,7 +2,6 @@
 
 @import 'core';
 @import 'components';
-@import 'transitions'; // Not sure we need this yet..
 
 html.js {
   body {
@@ -24,6 +23,7 @@ html {
 
 /* stylelint-disable-next-line selector-max-id */
 #preview-bar-iframe,
+#admin-bar-iframe,
 .shopify-preview-bar {
   display: none;
 }

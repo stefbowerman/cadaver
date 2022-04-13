@@ -40,6 +40,18 @@
 
 @mixin has-hover {
   @media (hover: hover) {
-    @content
+    @content;
+  }
+}
+
+@mixin hide-scrollbar {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+    -webkit-appearance: none;
+    width: 0;
+    height: 0;
   }
 }
