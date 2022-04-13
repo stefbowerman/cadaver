@@ -10,4 +10,9 @@ export default class ProductSection extends BaseSection {
     this.productDetailForm    = new ProductDetailForm($('[data-product-detail-form]', this.$container).first())
     this.productDetailGallery = new ProductDetailGallery($('[data-product-detail-gallery]', this.$container).first())
   }
+
+  onUnload() {
+    this.productDetailForm.destroy()
+    this.productDetailGallery.destroy()
+  }
 }
