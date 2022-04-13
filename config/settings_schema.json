@@ -4,34 +4,7 @@
     "theme_name": "Cadaver",
     "theme_version": "1.0.0",
     "theme_author": "Stefan Bowerman",
-  },
-  {
-    "name": "Social",
-    "settings": [  
-      {
-        "type": "header",
-        "content": "Accounts"
-      },
-      {
-        "type": "text",
-        "id": "social_twitter_handle",
-        "label": "Twitter Handle"
-      }
-    ]
-  },
-  {
-    "name": "Sharing",
-    "settings": [
-      {
-        "type": "header",
-        "content": "Sharing Images"
-      },
-      {
-        "type": "image_picker",
-        "id": "sharing_image",
-        "label": "Image"
-      }
-    ]
+    "theme_support_url": "https://github.com/stefbowerman/cadaver"
   },
   {
     "name": "Favicon",
