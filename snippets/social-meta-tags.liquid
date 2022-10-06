@@ -31,6 +31,12 @@
   <meta property="og:price:currency" content="{{ cart.currency.iso_code }}">
 {%- endif -%}
 
+{% if settings.share_video_url %}
+  <meta property="og:video:url" content="{{ settings.share_video_url }}" />
+  <meta property="og:video:secure_url" content="{{ settings.share_video_url | replace: 'http:', 'https:' }}" />
+  <meta property="og:video:type" content="video/mp4">
+{% endif %}
+
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ og_title | escape }}">
 <meta name="twitter:description" content="{{ og_description | escape }}">
