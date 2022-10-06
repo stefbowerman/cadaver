@@ -513,8 +513,8 @@ var ProductDetailPrice = /*#__PURE__*/function () {
     key: "update",
     value: function update(variant) {
       if (variant) {
-        var price = (0, _currency.stripZeroCents)((0, _currency.formatMoney)(variant.price));
-        var comparePrice = (0, _currency.stripZeroCents)((0, _currency.formatMoney)(variant.compare_at_price));
+        var price = (0, _currency.stripZeroCents)((0, _currency.formatMoney)(variant.price, theme.moneyFormat));
+        var comparePrice = (0, _currency.stripZeroCents)((0, _currency.formatMoney)(variant.compare_at_price, theme.moneyFormat));
         this.$price.html(price);
 
         if (variant.compare_at_price > variant.price) {
@@ -876,8 +876,6 @@ exports.default = exports.events = void 0;
 
 var _jquery = _interopRequireDefault(require("jquery"));
 
-var _utils = require("./utils");
-
 var _cartAPI = require("./cartAPI");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -885,7 +883,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var selectors = {
-  form: 'form[action^="/cart/add"]',
+  form: 'form[action*="/cart/add"]',
   submit: '[type="submit"]'
 };
 var $window = (0, _jquery.default)(window);
@@ -947,7 +945,7 @@ var AJAXFormManager = function AJAXFormManager() {
 
 exports.default = AJAXFormManager;
 
-},{"./cartAPI":11,"./utils":15,"jquery":30}],9:[function(require,module,exports){
+},{"./cartAPI":11,"jquery":30}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1201,7 +1199,7 @@ var formatCart = function formatCart(cart) {
   cart.items.map(function (item) {
     item.image = (0, _image.getSizedImageUrl)(item.image, '500x');
     item.imageV2.url = (0, _image.getSizedImageUrl)(item.imageV2.url, '500x');
-    item.price = (0, _currency.formatMoney)(item.price);
+    item.price = (0, _currency.formatMoney)(item.price, theme.moneyFormat);
     item.multiple_quantities = item.quantity > 1; // Adjust the item's variant options to add "name" and "value" properties
 
     if (item.hasOwnProperty('product')) {

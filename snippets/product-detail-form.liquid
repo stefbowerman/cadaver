@@ -43,7 +43,7 @@
         <meta itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}">
         <link itemprop="availability" href="http://schema.org/{% if current_variant.available %}InStock{% else %}OutOfStock{% endif %}">
 
-        <form action="/cart/add" method="post" enctype="multipart/form-data" data-add-to-cart-form>     
+        {% form 'product', product, data-add-to-cart-form: true %} 
 
           {% if product.available %}
             {% unless product.has_only_default_variant %}
@@ -136,7 +136,7 @@
           {% else %}
             <span>Sold out</span>
           {% endif %}
-        </form>
+        {% endform %}
 
       </div>
     </div>

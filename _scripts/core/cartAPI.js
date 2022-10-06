@@ -19,7 +19,7 @@ export const formatCart = (cart) => {
   cart.items.map((item) => {
     item.image = getSizedImageUrl(item.image, '500x');
     item.imageV2.url = getSizedImageUrl(item.imageV2.url, '500x');    
-    item.price = formatMoney(item.price);
+    item.price = formatMoney(item.price, theme.moneyFormat);
     item.multiple_quantities = item.quantity > 1;
 
     // Adjust the item's variant options to add "name" and "value" properties

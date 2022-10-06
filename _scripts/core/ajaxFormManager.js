@@ -1,9 +1,8 @@
 import $ from 'jquery';
-import { getPropByString } from './utils';
 import { addItemFromForm } from './cartAPI';
 
 const selectors = {
-  form: 'form[action^="/cart/add"]',
+  form: 'form[action*="/cart/add"]',
   submit: '[type="submit"]'
 };
 

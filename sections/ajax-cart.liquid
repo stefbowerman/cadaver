@@ -1,6 +1,6 @@
 <div data-section-id="{{ section.id }}" data-section-type="ajax-cart">
   <div class="ajax-cart" data-ajax-cart>
-    <form action="/cart" method="post" novalidate>
+    <form action="{{ routes.cart_url }}" method="post" novalidate>
       <div class="ajax-cart__body" data-body>
         {% comment %} Filled in via JS {% endcomment %}
       </div>              

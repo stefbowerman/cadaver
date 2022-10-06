@@ -18,8 +18,8 @@ export default class ProductDetailPrice {
 
   update(variant) {
     if (variant) {
-      const price = stripZeroCents(formatMoney(variant.price))
-      const comparePrice = stripZeroCents(formatMoney(variant.compare_at_price))
+      const price = stripZeroCents(formatMoney(variant.price, theme.moneyFormat))
+      const comparePrice = stripZeroCents(formatMoney(variant.compare_at_price, theme.moneyFormat))
 
       this.$price.html(price)
 
