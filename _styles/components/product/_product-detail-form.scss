@@ -19,4 +19,9 @@
   &.is-active {
     border-bottom: 1px solid black;
   }
+
+  &.is-disabled {
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
 }

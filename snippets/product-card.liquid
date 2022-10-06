@@ -11,24 +11,27 @@
 
 {% endcomment -%}
 
-{% assign product_image_dimension = '600x' %}
-
-{% assign sold_out = false %}
-{% if product.available == false %}
-  {% assign sold_out = true %}
-{% endif %}
-
 {% if product %}
-  <div class="product-card{% if sold_out %} product-card--sold-out{% endif %}" data-product-card>
+  <div class="product-card{% if product.available == false %} product-card--sold-out{% endif %}" data-product-card>
     <div class="product-card__contents">
       {% if product.featured_image %}
         <a href="{{ product.url }}">
           <div class="product-card__gallery">
-            <div class="product-card__gallery-image" data-product-card-gallery>
+            <div class="product-card__gallery-image">
               <img
-                src="{{ product.featured_image.src | img_url: product_image_dimension }}"
+                data-src="{{ product.featured_image | image_url: width: '600' }}"
+                data-srcset="{{ product.featured_image | image_url: width: '180' }} 180w,
+                              {{ product.featured_image | image_url: width: '360' }} 360w,
+                              {{ product.featured_image | image_url: width: '540' }} 540w,
+                              {{ product.featured_image | image_url: width: '720' }} 720w,
+                              {{ product.featured_image | image_url: width: '1000' }} 1000w,
+                              {{ product.featured_image | image_url: width: '1200' }} 1200w"
+                data-sizes="auto"                             
                 alt="{{ product.featured_image.alt | escape }}"
-              >
+                height="{{ product.featured_image.height }}"
+                width="{{ product.featured_image.width }}"
+                class="lazyload"
+              >                
             </div>
           </div>
         </a>

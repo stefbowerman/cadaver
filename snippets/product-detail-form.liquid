@@ -23,6 +23,30 @@
 {% endif %}
 {% comment %} End Defaults {% endcomment %}
 
+{% comment %}
+  If the product has variants for something other than color, force selection
+  We don't care about color because it's very obvious what color is being selected
+  if a product comes in color and size, we want the selection required text to just say "Select Size"
+{% endcomment %}
+{%- liquid
+  assign selection_required = false
+  assign non_color_variant_options_count = 0
+  assign single_non_color_variant_option_name = ''
+
+  for option in product.options_with_values
+    assign option_name_upcase = option.name | upcase
+    if option_name_upcase != "COLOR" and option.values.size > 1
+      assign selection_required = true
+      assign single_non_color_variant_option_name = option.name
+      assign non_color_variant_options_count = non_color_variant_options_count | plus: 1
+    endif
+  endfor
+
+  assign selection_required_text = 'Select Options'
+  if non_color_variant_options_count == 1
+    assign selection_required_text = 'Select ' | append: single_non_color_variant_option_name
+  endif
+%}
 
 <div class="product-detail-form" data-product-detail-form>
   <div class="container">
@@ -48,8 +72,21 @@
           {% if product.available %}
             {% unless product.has_only_default_variant %}
               {% for option in product.options_with_values %}
-                
-                {% assign option_name_upcase = option.name | upcase %}
+
+                {%- liquid
+                  assign option_has_single_value = false
+                  assign can_show_sold_out_ui_for_option = false
+
+                  if option.values.size == 1
+                    assign option_has_single_value = true
+                  endif
+
+                  if product.options.size == 1
+                    assign can_show_sold_out_ui_for_option = true
+                  elsif product.options.size == 2 and option.position == 2 and product.options_with_values[0].values.size == 1
+                    assign can_show_sold_out_ui_for_option = true
+                  endif
+                -%}               
 
                 {% comment %} Don't show the selector if there's only one value {% endcomment %}
                 <div class="selector-wrapper form-group js" {% if option_has_single_value %}style="display: none"{% endif %}>
@@ -80,21 +117,24 @@
                     {% for value in option.values %}
 
                       {% comment %} If the product only has one option (like size) then we can show values as sold out by checking the variant for that option {% endcomment %}
-                      {% assign is_disabled = false %}
+                      {%- liquid
+                        assign is_disabled = false
+                        assign is_selected = false
 
-                      {% if can_show_sold_out_ui_for_option %}
-                        {% for v in product.variants %}
-                          {% assign variant_option_prop = 'option' | append: option.position %}
-                          {% if v[variant_option_prop] == value and v.available == false %}
-                            {% assign is_disabled = true %}
-                          {% endif %}
-                        {% endfor %}
-                      {% endif %}
+                        if can_show_sold_out_ui_for_option
+                          for v in product.variants
+                            assign variant_option_prop = 'option' | append: option.position
 
-                      {% assign is_selected = false %}
-                      {% if is_color and forloop.index0 == 0 %}
-                        {% assign is_selected = true %}
-                      {% endif %}
+                            if v[variant_option_prop] == value and v.available == false
+                              assign is_disabled = true
+                            endif
+                          endfor
+                        endif
+
+                        if is_color and forloop.index0 == 0
+                          assign is_selected = true
+                        endif
+                      -%}
 
                       <a
                         href="#"
@@ -128,9 +168,13 @@
               name="add"
               class="btn"
               data-add-to-cart-btn
-              {% if selection_required or product.available == false %}disabled="disabled"{% endif %}>
+              {% if selection_required %}disabled="disabled"{% endif %}>
               <span data-add-to-cart-text>
-               Add To Cart
+                {% if selection_required %}
+                  {{ selection_required_text }}
+                {% else %}
+                  Add To Cart
+                {% endif %}
               </span>
             </button>
           {% else %}

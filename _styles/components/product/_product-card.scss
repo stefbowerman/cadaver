@@ -7,7 +7,9 @@
   max-width: 500px;
   margin: 0 auto;
 
-  &.product-card--sold-out {}
+  &.product-card--sold-out {
+    //
+  }
 }
 
 .product-card__contents {
@@ -27,6 +29,18 @@
   img {
     display: block;
     width: 100%;
+    height: auto;
+
+    transition: $image-opacity-transition;
+    opacity: 0;
+
+    &.lazyload {
+      opacity: 0;
+    }
+
+    &.lazyloaded {
+      opacity: 1;
+    }     
   }
 }
 

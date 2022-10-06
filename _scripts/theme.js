@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import Highway from '@dogstudio/highway';
+import 'lazysizes';
 import { throttle } from 'throttle-debounce';
 
 // Core

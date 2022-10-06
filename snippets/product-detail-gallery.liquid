@@ -19,9 +19,10 @@
 
       {% for width in widths %}
         {% assign image_size = width | append: 'x' %}
-        {% capture srcset_size %}{{ image.src | img_url: image_size }} {{ width | append: 'w' }}{% unless forloop.last %},{% endunless %}{% endcapture %}
+        {% capture srcset_size %}{{ image.src | image_url: width: image_size }} {{ width | append: 'w' }}{% unless forloop.last %},{% endunless %}{% endcapture %}
         {% assign srcset = srcset | append: srcset_size %}
       {% endfor %}
+      
       {% assign srcset = srcset | strip %}
 
       <li
@@ -30,10 +31,12 @@
         data-gallery-item
       >
         <img
-          src="{{ image | img_url: photo_main_dimension }}"
-          srcset="{{ srcset }}"
-          alt="{{ mage.alt | escape }}"
-          class="product-gallery__image"
+          data-src="{{ image | img_url: photo_main_dimension }}"
+          data-srcset="{{ srcset }}"
+          alt="{{ image.alt | escape }}"
+          class="lazyload"
+          height="{{ image.height }}"
+          width="{{ image.width }}"
         >
       </li>
     {% endfor %}

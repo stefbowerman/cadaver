@@ -14,7 +14,7 @@
       <div class="content-grid">
         {% for product in collection.products %}
           <div class="content-grid__item">
-            {% include 'product-card',
+            {% render 'product-card',
                         product: product
             %}
           </div>
