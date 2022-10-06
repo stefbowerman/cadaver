@@ -1737,10 +1737,7 @@ exports.pad = pad;
 exports.clamp = clamp;
 exports.getScrollY = getScrollY;
 exports.credits = credits;
-
-var _jquery = _interopRequireDefault(require("jquery"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+exports.targetBlankExternalLinks = targetBlankExternalLinks;
 
 /**
  * Return an object from an array of objects that matches the provided key and value
@@ -2212,7 +2209,14 @@ function credits() {
   }
 }
 
-},{"jquery":30}],16:[function(require,module,exports){
+function targetBlankExternalLinks() {
+  for (var c = document.getElementsByTagName("a"), a = 0; a < c.length; a++) {
+    var b = c[a];
+    b.getAttribute("href") && b.hostname !== location.hostname && (b.target = "_blank");
+  }
+}
+
+},{}],16:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2984,18 +2988,29 @@ var _ajaxCart = _interopRequireDefault(require("./sections/ajaxCart"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Core
-// Renderers
-// Transitions
-// Sections
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+var $body = (0, _jquery.default)(document.body);
+var TEMPLATE_REGEX = /(^|\s)template-\S+/g;
+
 var setViewportHeightProperty = function setViewportHeightProperty() {
   // If mobile / tablet, set var to window height. This fixes the 100vh iOS bug/feature.
   var v = window.innerWidth <= 1024 ? "".concat(window.innerHeight, "px") : '100vh';
   document.documentElement.style.setProperty('--viewport-height', v);
 };
 
-var $body = (0, _jquery.default)(document.body);
-var TEMPLATE_REGEX = /(^|\s)template-\S+/g;
 (0, _animations.initialize)();
 (0, _breakpoints.initialize)();
 
@@ -3022,14 +3037,40 @@ var TEMPLATE_REGEX = /(^|\s)template-\S+/g;
 
   if ((0, _utils.isThemeEditor)()) {
     highway.detach(document.querySelectorAll('a'));
-  } // Listen the `NAVIGATE_IN` event
-  // This event is sent everytime a `data-router-view` is added to the DOM Tree
+  } // Listen the `NAVIGATE_OUT` event
+  // This event is sent everytime the `out()` method of a transition is run to hide a `data-router-view`
 
 
-  highway.on('NAVIGATE_IN', function (_ref) {
-    var to = _ref.to,
+  highway.on('NAVIGATE_OUT', function (_ref) {
+    var from = _ref.from,
         trigger = _ref.trigger,
         location = _ref.location;
+    ajaxCart.close(); // Delete any product pages that end up in the highway cache
+
+    var _iterator = _createForOfIteratorHelper(highway.cache),
+        _step;
+
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var _step$value = _slicedToArray(_step.value, 1),
+            key = _step$value[0];
+
+        if (key.split('/').includes('products')) {
+          highway.cache.delete(key);
+        }
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+  }); // Listen the `NAVIGATE_IN` event
+  // This event is sent everytime a `data-router-view` is added to the DOM Tree
+
+  highway.on('NAVIGATE_IN', function (_ref2) {
+    var to = _ref2.to,
+        trigger = _ref2.trigger,
+        location = _ref2.location;
     $body.removeClass(function (i, currentClasses) {
       return currentClasses.split(' ').map(function (c) {
         return c.match(TEMPLATE_REGEX);
@@ -3040,14 +3081,6 @@ var TEMPLATE_REGEX = /(^|\s)template-\S+/g;
         return c.match(TEMPLATE_REGEX);
       }).join(' ');
     });
-  }); // Listen the `NAVIGATE_OUT` event
-  // This event is sent everytime the `out()` method of a transition is run to hide a `data-router-view`
-
-  highway.on('NAVIGATE_OUT', function (_ref2) {
-    var from = _ref2.from,
-        trigger = _ref2.trigger,
-        location = _ref2.location;
-    ajaxCart.close();
   }); // Listen the `NAVIGATE_END` event
   // This event is sent everytime the `done()` method is called in the `in()` method of a transition
 
@@ -3061,6 +3094,8 @@ var TEMPLATE_REGEX = /(^|\s)template-\S+/g;
     if (view === 'cart') {
       ajaxCart.open();
     }
+
+    (0, _utils.targetBlankExternalLinks)();
   }); // END Highway
 
   (0, _jquery.default)('.in-page-link').on('click', function (evt) {
@@ -3075,6 +3110,7 @@ var TEMPLATE_REGEX = /(^|\s)template-\S+/g;
     setViewportHeightProperty();
   }));
   setViewportHeightProperty();
+  (0, _utils.targetBlankExternalLinks)(); // All external links open in a new tab
 
   if (window.history && window.history.scrollRestoration) {
     // Prevents browser from restoring scroll position when hitting the back button

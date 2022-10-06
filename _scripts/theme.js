@@ -6,7 +6,7 @@ import { throttle } from 'throttle-debounce';
 import {
   userAgentBodyClass,
   isThemeEditor,
-  isExternal
+  targetBlankExternalLinks
 } from './core/utils'
 import { pageLinkFocus } from './core/a11y'
 import { initialize as initializeAnimations }  from './core/animations'
@@ -27,14 +27,14 @@ import SectionManager from './core/sectionManager'
 import Header from './sections/header'
 import AJAXCart from './sections/ajaxCart'
 
+const $body = $(document.body);
+const TEMPLATE_REGEX = /(^|\s)template-\S+/g;
+
 const setViewportHeightProperty = () => {
   // If mobile / tablet, set var to window height. This fixes the 100vh iOS bug/feature.
   const v = window.innerWidth <= 1024 ? `${window.innerHeight}px` : '100vh';
   document.documentElement.style.setProperty('--viewport-height', v);
 };
-
-const $body = $(document.body);
-const TEMPLATE_REGEX = /(^|\s)template-\S+/g;
 
 initializeAnimations();
 initializeBreakpoints();
@@ -66,7 +66,20 @@ initializeBreakpoints();
   // Prevent highway js from running inside the theme editor
   if (isThemeEditor()) {
     highway.detach(document.querySelectorAll('a'))
-  }  
+  }
+
+  // Listen the `NAVIGATE_OUT` event
+  // This event is sent everytime the `out()` method of a transition is run to hide a `data-router-view`
+  highway.on('NAVIGATE_OUT', ({ from, trigger, location }) => {
+    ajaxCart.close();
+
+    // Delete any product pages that end up in the highway cache
+    for (let [key] of highway.cache) {
+      if (key.split('/').includes('products')) {
+        highway.cache.delete(key)
+      }
+    }    
+  });  
 
   // Listen the `NAVIGATE_IN` event
   // This event is sent everytime a `data-router-view` is added to the DOM Tree
@@ -80,12 +93,6 @@ initializeBreakpoints();
     });
   });
 
-  // Listen the `NAVIGATE_OUT` event
-  // This event is sent everytime the `out()` method of a transition is run to hide a `data-router-view`
-  highway.on('NAVIGATE_OUT', ({ from, trigger, location }) => {
-    ajaxCart.close();
-  });
-
   // Listen the `NAVIGATE_END` event
   // This event is sent everytime the `done()` method is called in the `in()` method of a transition
   highway.on('NAVIGATE_END', ({ to, from, trigger, location }) => {
@@ -94,6 +101,8 @@ initializeBreakpoints();
     if (view === 'cart') {
       ajaxCart.open();
     }
+
+    targetBlankExternalLinks();
   });
   // END Highway
 
@@ -111,6 +120,7 @@ initializeBreakpoints();
   }));
 
   setViewportHeightProperty();
+  targetBlankExternalLinks(); // All external links open in a new tab
 
   if (window.history && window.history.scrollRestoration) {
     // Prevents browser from restoring scroll position when hitting the back button

@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 /**
  * Return an object from an array of objects that matches the provided key and value
  *
@@ -445,5 +443,13 @@ export function credits() {
   if (window && window.location && window.location.hostname !== 'localhost') {
     // eslint-disable-next-line no-console, max-len
     console.log('%cdesign + development courtesy of...', 'font-family: Helvetica; font-size: 11px;');
+  }
+}
+
+export function targetBlankExternalLinks() {
+  for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+    var b = c[a];
+
+    b.getAttribute("href") && b.hostname !== location.hostname && (b.target = "_blank")
   }
 }
