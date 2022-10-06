@@ -108,5 +108,19 @@
     </div>
 
     {% section 'ajax-cart' %}
+
+    {% if settings.developer_hide_preview_bar == true %}
+      <style>
+        html {
+          padding-bottom: 0 !important; /* Shopify admin bar messes this up */
+        }
+
+        #preview-bar-iframe,
+        #admin-bar-iframe,
+        .shopify-preview-bar {
+          display: none;
+        }
+      </style>
+    {% endif %}    
   </body>
 </html>

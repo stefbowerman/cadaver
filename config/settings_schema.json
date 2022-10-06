@@ -17,5 +17,16 @@
         "info": "Should be at least 32px x 32px"
       }
     ]
-  }
+  },
+  {
+    "name": "Developer Settings",
+    "settings": [
+       {
+        "type": "checkbox",
+        "id": "developer_hide_preview_bar",
+        "label": "Hide Preview Bar",
+        "default": false
+      }
+    ]
+  }  
 ]

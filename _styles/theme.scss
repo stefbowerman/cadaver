@@ -15,15 +15,3 @@ html.js {
     }
   }
 }
-
-// Fix Shopify preview stuff
-html {
-  padding-bottom: 0 !important; // Shopify admin bar messes this up
-}
-
-/* stylelint-disable-next-line selector-max-id */
-#preview-bar-iframe,
-#admin-bar-iframe,
-.shopify-preview-bar {
-  display: none;
-}
