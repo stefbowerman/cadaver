@@ -10,8 +10,17 @@
   "item_count": {{ cart.item_count }},
   "items" : [
     {% for item in cart.items %}
-      {% assign product = item.product %}
-      {% assign variant = item.variant %}
+      {%- liquid
+        assign product = item.product
+        assign variant = item.variant
+        assign is_addable = false
+        
+        if variant.inventory_policy == "continue"
+          assign is_addable = true
+        elsif variant.inventory_quantity > item.quantity
+          assign is_addable = true
+        endif
+      -%}
 
       {
         "id": {{ item.variant_id }},
@@ -34,7 +43,7 @@
         },
         "discounts": [
           {% for d in item.discounts %}
-            {{ discount | json }}{% unless forloop.last %},{% endunless %}
+            {{ d | json }}{% unless forloop.last %},{% endunless %}
           {% endfor %}
         ],
         "variant_id": {{ item.variant_id | json }},
@@ -55,7 +64,7 @@
         },        
         "handle": {{ product.handle | json }},
         "requires_shipping": {{ item.requires_shipping }},
-        "product": {% include 'product-json', product: product %},
+        "product": {% render 'product-json', product: product %},
         "product_id": {{ product.id }},
         "product_title": {{ product.title | json }},
         "product_description": {{ product.description | json }},
@@ -65,7 +74,8 @@
           {% if item.variant.option1 != blank %}{{ item.variant.option1 | json }}{% endif %}
           {% if item.variant.option2 != blank %}, {{ item.variant.option2 | json }}{% endif %}
           {% if item.variant.option3 != blank %}, {{ item.variant.option3 | json }}{% endif %}
-        ]
+        ],
+        "isAddable": {{ is_addable | json }}
       }{% unless forloop.last %},{% endunless %}
     {% endfor %}
   ]
