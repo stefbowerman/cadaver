@@ -114,20 +114,21 @@ export const addItemFromForm = ($form) => {
 
 /**
  * Change the quantity of an item in the users cart
- * Item is specified by line_item index (Shopify index which starts at 1 not 0)
+ * Item is specified by line_item key
+ * https://shopify.dev/api/ajax/reference/cart#post-locale-cart-change-js
  *
- * @param {Integer} line - Cart line
+ * @param {String} id - Cart line item key
  * @param {Integer} qty - New quantity of the variant
  * @return {Promise} - JSON cart
  */
-export const changeLineItemQuantity = (line, qty) => {
+export const changeLineItemQuantity = (id, qty) => {
   const promise = $.Deferred();
 
   $.ajax({
     type: 'post',
     dataType: 'json',
     url: '/cart/change.js',
-    data: `quantity=${qty}&line=${line}`,
+    data: `quantity=${qty}&id=${id}`,
     success: () => {
       getCart().then((cart) => {
         promise.resolve(cart)

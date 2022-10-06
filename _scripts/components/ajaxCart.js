@@ -31,6 +31,7 @@ export default class AJAXCart {
   constructor(el) {
     this.isOpen = false
     this.hasBeenRendered = false
+    this.requestInProgress = false
 
     this.callbacks = {
       bodyToggleClick: this.onToggleClick.bind(this),
@@ -56,7 +57,7 @@ export default class AJAXCart {
     let html = ''
 
     if (cart.items) {
-      html = $.map(cart.items, ({ key, quantity, imageV2, product_title, price, variant_title }) => {
+      html = $.map(cart.items, ({ key, quantity, imageV2, product_title, price, variant_options }) => {
         return `
           <div class="ajax-cart__item" data-key="${key}" data-qty="${quantity}" data-item>
             <div class="ajax-cart__item-image">
@@ -65,7 +66,13 @@ export default class AJAXCart {
             <div class="ajax-cart__item-info">
               <h4>${product_title}</h4>
               <div>${price}</div>
-              <div>${variant_title}</div>
+              ${variant_options.map(option => `
+                  <div class="ajax-cart__item-detail">
+                    <div>${option.name}:</div>
+                    <div>${option.value}</div>
+                  </div>
+                `).join('')
+              }
               ${ quantity > 1 ? `<div>QTY ${quantity}</div>` : '' }
               <a href="#" class="btn" data-item-remove>Remove</a>
             </div>            
@@ -100,7 +107,6 @@ export default class AJAXCart {
     return {
       $el: $el,
       key: $el.data('key'),
-      line: $el.index() + 1,
       qty: this.validateQty($el.data('qty'))
     };
   }  
@@ -113,6 +119,8 @@ export default class AJAXCart {
    * @return this
    */
   render(cart, slot) {
+    if (!cart) return
+
     if (slot === 'body') {
       this.$body.html(this.bodyTemplate(cart))
     }
@@ -124,9 +132,11 @@ export default class AJAXCart {
       this.$totalPrice.html(cart.total_price)
     }
 
-    this.onRender(cart)
+    this.$el.toggleClass(classes.empty, cart.item_count === 0);
 
     $window.trigger($.Event(events.RENDER, { cart }));
+
+    this.hasBeenRendered = true;
 
     return this;
   }
@@ -159,14 +169,6 @@ export default class AJAXCart {
     // 
   }
 
-  onRender(cart) {
-    if (cart) {
-      this.$el.toggleClass(classes.empty, cart.item_count === 0);
-    }
-
-    this.hasBeenRendered = true
-  }
-
   /**
    * Remove the item from the cart.  Extract this into a separate method if there becomes more ways to delete an item
    *
@@ -175,14 +177,27 @@ export default class AJAXCart {
   onItemRemoveClick(e) {
     e.preventDefault();
 
-    const { line, $el } = this.getItemAttributes(e.target)
+    if (this.requestInProgress) {
+      return
+    }
 
-    changeLineItemQuantity(line, 0)
+    const { key, $el } = this.getItemAttributes(e.target)
+
+    this.requestInProgress = true
+
+    changeLineItemQuantity(key, 0)
       .then((cart) => {
         if (cart.item_count > 0) {
-          // We only need to re-render the price
-          $el.remove();
-          this.render(cart, 'price');
+          // We only need to remove the deleted item and re-render the price
+          $el.slideUp({
+            duration: 400,
+            start: () => {
+              this.render(cart, 'price');
+            },
+            done: () => {
+              $el.remove();
+            }
+          })
         }
         else {
           this.render(cart);
@@ -190,7 +205,10 @@ export default class AJAXCart {
       })
       .fail(() => {
         console.warn('something went wrong...');
-      }) 
+      })
+      .always(() => {
+        this.requestInProgress = false
+      })
   }
 
   onToggleClick(e) {

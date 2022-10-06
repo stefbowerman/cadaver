@@ -47,6 +47,7 @@ var AJAXCart = /*#__PURE__*/function () {
 
     this.isOpen = false;
     this.hasBeenRendered = false;
+    this.requestInProgress = false;
     this.callbacks = {
       bodyToggleClick: this.onToggleClick.bind(this),
       bodyCloseClick: this.onCloseClick.bind(this)
@@ -78,8 +79,10 @@ var AJAXCart = /*#__PURE__*/function () {
               imageV2 = _ref.imageV2,
               product_title = _ref.product_title,
               price = _ref.price,
-              variant_title = _ref.variant_title;
-          return "\n          <div class=\"ajax-cart__item\" data-key=\"".concat(key, "\" data-qty=\"").concat(quantity, "\" data-item>\n            <div class=\"ajax-cart__item-image\">\n              <img src=\"").concat(imageV2.url, "\" />\n            </div>\n            <div class=\"ajax-cart__item-info\">\n              <h4>").concat(product_title, "</h4>\n              <div>").concat(price, "</div>\n              <div>").concat(variant_title, "</div>\n              ").concat(quantity > 1 ? "<div>QTY ".concat(quantity, "</div>") : '', "\n              <a href=\"#\" class=\"btn\" data-item-remove>Remove</a>\n            </div>            \n          </div>\n        ");
+              variant_options = _ref.variant_options;
+          return "\n          <div class=\"ajax-cart__item\" data-key=\"".concat(key, "\" data-qty=\"").concat(quantity, "\" data-item>\n            <div class=\"ajax-cart__item-image\">\n              <img src=\"").concat(imageV2.url, "\" />\n            </div>\n            <div class=\"ajax-cart__item-info\">\n              <h4>").concat(product_title, "</h4>\n              <div>").concat(price, "</div>\n              ").concat(variant_options.map(function (option) {
+            return "\n                  <div class=\"ajax-cart__item-detail\">\n                    <div>".concat(option.name, ":</div>\n                    <div>").concat(option.value, "</div>\n                  </div>\n                ");
+          }).join(''), "\n              ").concat(quantity > 1 ? "<div>QTY ".concat(quantity, "</div>") : '', "\n              <a href=\"#\" class=\"btn\" data-item-remove>Remove</a>\n            </div>            \n          </div>\n        ");
         }).join('');
       }
 
@@ -112,7 +115,6 @@ var AJAXCart = /*#__PURE__*/function () {
       return {
         $el: $el,
         key: $el.data('key'),
-        line: $el.index() + 1,
         qty: this.validateQty($el.data('qty'))
       };
     }
@@ -127,6 +129,8 @@ var AJAXCart = /*#__PURE__*/function () {
   }, {
     key: "render",
     value: function render(cart, slot) {
+      if (!cart) return;
+
       if (slot === 'body') {
         this.$body.html(this.bodyTemplate(cart));
       } else if (slot === 'price') {
@@ -136,10 +140,11 @@ var AJAXCart = /*#__PURE__*/function () {
         this.$totalPrice.html(cart.total_price);
       }
 
-      this.onRender(cart);
+      this.$el.toggleClass(classes.empty, cart.item_count === 0);
       $window.trigger(_jquery.default.Event(events.RENDER, {
         cart: cart
       }));
+      this.hasBeenRendered = true;
       return this;
     }
   }, {
@@ -172,15 +177,6 @@ var AJAXCart = /*#__PURE__*/function () {
     key: "onChangeFail",
     value: function onChangeFail() {// 
     }
-  }, {
-    key: "onRender",
-    value: function onRender(cart) {
-      if (cart) {
-        this.$el.toggleClass(classes.empty, cart.item_count === 0);
-      }
-
-      this.hasBeenRendered = true;
-    }
     /**
      * Remove the item from the cart.  Extract this into a separate method if there becomes more ways to delete an item
      *
@@ -194,21 +190,34 @@ var AJAXCart = /*#__PURE__*/function () {
 
       e.preventDefault();
 
+      if (this.requestInProgress) {
+        return;
+      }
+
       var _this$getItemAttribut = this.getItemAttributes(e.target),
-          line = _this$getItemAttribut.line,
+          key = _this$getItemAttribut.key,
           $el = _this$getItemAttribut.$el;
 
-      (0, _cartAPI.changeLineItemQuantity)(line, 0).then(function (cart) {
+      this.requestInProgress = true;
+      (0, _cartAPI.changeLineItemQuantity)(key, 0).then(function (cart) {
         if (cart.item_count > 0) {
-          // We only need to re-render the price
-          $el.remove();
-
-          _this.render(cart, 'price');
+          // We only need to remove the deleted item and re-render the price
+          $el.slideUp({
+            duration: 400,
+            start: function start() {
+              _this.render(cart, 'price');
+            },
+            done: function done() {
+              $el.remove();
+            }
+          });
         } else {
           _this.render(cart);
         }
       }).fail(function () {
         console.warn('something went wrong...');
+      }).always(function () {
+        _this.requestInProgress = false;
       });
     }
   }, {
@@ -1294,9 +1303,10 @@ var addItemFromForm = function addItemFromForm($form) {
 };
 /**
  * Change the quantity of an item in the users cart
- * Item is specified by line_item index (Shopify index which starts at 1 not 0)
+ * Item is specified by line_item key
+ * https://shopify.dev/api/ajax/reference/cart#post-locale-cart-change-js
  *
- * @param {Integer} line - Cart line
+ * @param {String} id - Cart line item key
  * @param {Integer} qty - New quantity of the variant
  * @return {Promise} - JSON cart
  */
@@ -1304,14 +1314,14 @@ var addItemFromForm = function addItemFromForm($form) {
 
 exports.addItemFromForm = addItemFromForm;
 
-var changeLineItemQuantity = function changeLineItemQuantity(line, qty) {
+var changeLineItemQuantity = function changeLineItemQuantity(id, qty) {
   var promise = _jquery.default.Deferred();
 
   _jquery.default.ajax({
     type: 'post',
     dataType: 'json',
     url: '/cart/change.js',
-    data: "quantity=".concat(qty, "&line=").concat(line),
+    data: "quantity=".concat(qty, "&id=").concat(id),
     success: function success() {
       getCart().then(function (cart) {
         promise.resolve(cart);
