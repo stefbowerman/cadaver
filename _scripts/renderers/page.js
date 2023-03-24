@@ -1,4 +1,4 @@
-import BaseRenderer from './base';
+import BaseRenderer from './base'
 
 export default class PageRenderer extends BaseRenderer {
   onEnter() {

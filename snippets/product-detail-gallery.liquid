@@ -14,8 +14,10 @@
 <div class="product-detail-gallery" data-gallery>
   <ul class="product-detail-gallery__list">
     {% for image in product.images %}
-      {% assign srcset = '' %}
-      {% assign widths = '250, 440, 720, 930, 1080, 1200, 1400, 1600, 1800' | split: ', ' %}
+      {%- liquid
+        assign srcset = ''
+        assign widths = '250, 440, 720, 930, 1080, 1200, 1400, 1600, 1800' | split: ', '
+      %}
 
       {% for width in widths %}
         {% assign image_size = width | append: 'x' %}

@@ -410,7 +410,11 @@ export function isExternal(url) {
 }
 
 export function isTouch() {
-  return ((window.Modernizr && window.Modernizr.touchevents) || 'ontouchstart' in window);
+  if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
+    return true
+  }
+  
+  return false
 }
 
 export function random(min = 0, max = 1) {
@@ -450,6 +454,15 @@ export function targetBlankExternalLinks() {
   for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
     var b = c[a];
 
-    b.getAttribute("href") && b.hostname !== location.hostname && (b.target = "_blank")
+    if (b.getAttribute("href") && b.hostname !== location.hostname) {
+      b.target = "_blank"
+      b.setAttribute('aria-label', 'Link opens in a new window')
+    }
   }
 }
+
+export function setViewportHeightProperty() {
+  // If mobile / tablet, set var to window height. This fixes the 100vh iOS bug/feature.
+  const v = window.innerWidth <= 1024 ? `${window.innerHeight}px` : '100vh';
+  document.documentElement.style.setProperty('--viewport-height', v);
+};

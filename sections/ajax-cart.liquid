@@ -1,9 +1,16 @@
 <div data-section-id="{{ section.id }}" data-section-type="ajax-cart">
   <div class="ajax-cart" data-ajax-cart>
+    <div>
+      <span title="Close" aria-title="Close" role="button" data-close>
+        Close cart 
+      </span>
+    </div>
+
     <form action="{{ routes.cart_url }}" method="post" novalidate>
       <div class="ajax-cart__body" data-body>
         {% comment %} Filled in via JS {% endcomment %}
-      </div>              
+      </div>
+      
       <div class="ajax-cart__footer">
         <div class="ajax-cart__footer-row">
           Sub total: <span data-total-price></span>
@@ -22,7 +29,8 @@
       {% else %}
         <p>{{ 'cart.general.empty' | t }}</p>
       {% endif %}
-      <a href="/" class="btn" data-close data-router-disabled>Return to Shop</a>
+
+      <a href="/" class="btn" data-close data-taxi-ignore>Return to Shop</a>
     </div>    
   </div>
 </div>

@@ -1,5 +1,4 @@
-import $ from 'jquery';
-import { addItemFromForm } from './cartAPI';
+import { addItemFromForm } from './cartAPI'
 
 const selectors = {
   form: 'form[action*="/cart/add"]',
@@ -18,36 +17,36 @@ export const events = {
 
 export default class AJAXFormManager {
   constructor() {
-    let requestInProgress = false;
+    let requestInProgress = false
 
     $body.on('submit', selectors.form, (e) => {
-      e.preventDefault();
+      e.preventDefault()
 
-      if (requestInProgress) return;
+      if (requestInProgress) return
 
-      const $form = $(e.currentTarget);
-      const $submit = $form.find(selectors.submit);
+      const $form = $(e.currentTarget)
+      const $submit = $form.find(selectors.submit)
 
-      const startEvent = $.Event(events.ADD_START, { relatedTarget: $form });
-      $window.trigger(startEvent);
+      const startEvent = $.Event(events.ADD_START, { relatedTarget: $form })
+      $window.trigger(startEvent)
 
       // Disable the button so the user knows the form is being submitted
-      $submit.prop('disabled', true);
+      $submit.prop('disabled', true)
 
-      requestInProgress = true;
+      requestInProgress = true
 
       addItemFromForm($form)
         // Always needs to go before then / fail because the window event callbacks can cause a change to the disabled state of the button
         .always(() => {
-          $submit.prop('disabled', false);
-          requestInProgress = false;
+          $submit.prop('disabled', false)
+          requestInProgress = false
 
-          const event = $.Event(events.ADD_DONE, { relatedTarget: $form });
-          $window.trigger(event);          
+          const event = $.Event(events.ADD_DONE, { relatedTarget: $form })
+          $window.trigger(event)
         })      
         .then((data) => {
-          const event = $.Event(events.ADD_SUCCESS, { cart: data, relatedTarget: $form });
-          $window.trigger(event);
+          const event = $.Event(events.ADD_SUCCESS, { cart: data, relatedTarget: $form })
+          $window.trigger(event)
         })
         .fail((data) => {
           const event = $.Event(events.ADD_FAIL, {
@@ -56,7 +55,7 @@ export default class AJAXFormManager {
             relatedTarget: $form
           });
           
-          $window.trigger(event);
+          $window.trigger(event)
         });
     });
   }

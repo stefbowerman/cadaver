@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
     <link rel="preconnect" href="https://monorail-edge.shopifysvc.com">        
     
-    {%- if canonical_url != blank  -%}
+    {%- if canonical_url != blank -%}
       <link rel="canonical" href="{{ canonical_url }}">
     {%- endif -%}
 
@@ -42,34 +42,9 @@
     {% render 'social-meta-tags' %}
     {% render 'font-face' %}
     
-    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ 'app.bundle.css' | asset_url | stylesheet_tag }}
 
-    <script>
-      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
-      
-      window.theme = {
-        strings: {
-          addToCart: 'Add To Cart',
-          soldOut: 'Sold Out',
-          unavailable: 'Unavailable'
-        },
-        moneyFormat: {{ shop.money_format | json }}
-      };
-    </script>
-
-    
-    {% render 'modernizr' %}
-
-    {% comment %}
-      If your store has customers enabled, uncomment the script tags below
-      
-      <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script>
-      <script src="{{ 'customer_area.js'  | shopify_asset_url }}" defer="defer"></script>      
-    {% endcomment %}
-    
-    <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
-
-    <script src="//instant.page/5.1.0" type="module" integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    {% render 'scripts-head' %}
 
     {{ content_for_header }}
   </head>
@@ -88,6 +63,7 @@
 
   <body id="{{ page_title | handle }}" class="{{ body_class | strip | strip_newlines }}">
     <script type="text/javascript">document.body.className += ' is-loading';</script>
+
     <a class="in-page-link visually-hidden skip-link" href="#view-container">
       {{ 'general.accessibility.skip_to_content' | t }}
     </a>
@@ -96,8 +72,8 @@
       <div class="layout">
         {% section 'header' %}
 
-        <main id="view-container" class="view-container" role="main" data-router-wrapper>
-          <div id="view-content" class="view-content" data-router-view="{{ view }}">
+        <main id="view-container" class="view-container" role="main" data-taxi>
+          <div id="view-content" class="view-content" data-taxi-view="{{ view }}">
             {{ content_for_layout }}
           </div>
         </main>

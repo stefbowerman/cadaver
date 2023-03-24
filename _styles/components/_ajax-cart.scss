@@ -1,5 +1,6 @@
 .ajax-cart {
   position: fixed;
+  z-index: $zindex-ajax-cart;
   top: 0;
   right: 0;
   height: 50vh;
@@ -27,7 +28,9 @@
 }
 
 .ajax-cart__item-image {
-
+  img {
+    height: auto;
+  }
 }
 
 .ajax-cart__item-info {

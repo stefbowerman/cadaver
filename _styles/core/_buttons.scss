@@ -1,37 +1,43 @@
 .btn {
   display: inline-block;
-  margin-top: 12px;
   background: none;
   text-transform: uppercase;
-  background-color: $white;
-  border: 1px solid $black;
-  border-radius: 0px;
-  padding: 12px 17px;
-  font-size: 12px;
+  background-color: $black;
+  border: 2px solid $black;
+  color: $white;
+  border-radius: 0;
+  padding: 10px 31px;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 1;
   width: auto;
   cursor: pointer;
+  text-decoration: none !important; // In case it's an <a> inside .rte
 
   @include has-hover {
-    &:hover,
-    &:focus {
-      background-color: darken($white, 10%);
+    &:not(:disabled):hover,
+    &:not(:disabled):focus {
+      background-color: lighten($black, 12%);
     }
   }
 
   &.disabled,
   &:disabled {
     cursor: not-allowed;
-    border: 1px solid #ccc;
 
-    @include has-hover {
-      &:hover,
-      &:focus {
-        // background-color: darken($white, 10%);
-      }
-    }    
+    // @include has-hover {
+    //   &:hover,
+    //   &:focus {
+
+    //   }
+    // }    
   }
 
   &:focus {
     outline: 0;
   }
+}
+
+.btn--block {
+  width: 100%;
 }

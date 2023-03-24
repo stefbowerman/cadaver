@@ -7,7 +7,6 @@
   data-section-type="header"
 >
   <nav class="header-nav">
-
     {% if ll.links.size > 0 %}
       <ul>
         {% for link in ll.links %}
@@ -28,7 +27,7 @@
   <a
     href="/cart"
     class="header-cart {% if cart.item_count > 0 %} has-items{% endif %}"
-    data-router-disabled
+    data-taxi-ignore
     data-ajax-cart-toggle
   >
       Cart <span data-cart-count>{{ cart.item_count }}</span>

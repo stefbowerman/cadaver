@@ -1,15 +1,14 @@
-import $ from 'jquery';
-import BaseSection from '../sections/base';
+import BaseSection from '../sections/base'
 
-const SECTION_TYPE_ATTR = 'data-section-type';
-const SECTION_ID_ATTR = 'data-section-id';
+const SECTION_TYPE_ATTR = 'data-section-type'
+const SECTION_ID_ATTR = 'data-section-id'
 
-const $document = $(document);
+const $document = $(document)
 
 export default class SectionManager {
   constructor() {
-    this.constructors = {};
-    this.instances = [];
+    this.constructors = {}
+    this.instances = []
 
     this.handlers = {
       sectionLoad: this.onSectionLoad.bind(this),
@@ -29,14 +28,14 @@ export default class SectionManager {
         .on('shopify:section:deselect', this.handlers.deselect)
         .on('shopify:section:reorder', this.handlers.reorder)
         .on('shopify:block:select', this.handlers.blockSelect)
-        .on('shopify:block:deselect', this.handlers.blockDeselect);
+        .on('shopify:block:deselect', this.handlers.blockDeselect)
     }
   }
 
   destroy() {
-    this.instances.forEach((section) => {
-      section.onUnload && section.onUnload();
-    });
+    this.instances.forEach(section => {
+      section.onUnload && section.onUnload()
+    })
 
     $document
       .off('shopify:section:load', this.handlers.sectionLoad)
@@ -45,118 +44,120 @@ export default class SectionManager {
       .off('shopify:section:deselect', this.handlers.deselect)
       .off('shopify:section:reorder', this.handlers.reorder)
       .off('shopify:block:select', this.handlers.blockSelect)
-      .off('shopify:block:deselect', this.handlers.blockDeselect);
+      .off('shopify:block:deselect', this.handlers.blockDeselect)
   }  
 
   getInstanceById(id) {
-    let instance;
+    let instance
 
     for (let i = 0; i < this.instances.length; i++) {
       if (this.instances[i].id === id) {
-        instance = this.instances[i];
-        break;
+        instance = this.instances[i]
+        break
       }
     }
-    return instance;
+    return instance
   }
 
   getSingleInstance(type) {
-    let instance;
+    let instance
 
     for (let i = 0; i < this.instances.length; i++) {
       if (this.instances[i].type === type) {
-        instance = this.instances[i];
+        instance = this.instances[i]
         break;
       }
     }
 
-    return instance;
+    return instance
   }  
 
   load(container, constructor) {
-    const $container = $(container);
-    const id = $container.attr(SECTION_ID_ATTR);
-    const type = $container.attr(SECTION_TYPE_ATTR);
-    const Konstructor = constructor || this.constructors[type]; // No param re-assignment
+    const $container = $(container)
+    const id = $container.attr(SECTION_ID_ATTR)
+    const type = $container.attr(SECTION_TYPE_ATTR)
+    const Konstructor = constructor || this.constructors[type] // No param re-assignment
 
     if (typeof Konstructor === 'undefined') {
-      return;
+      return
     }
 
-    const instance = $.extend(new Konstructor(container), { id, type, container });
+    const instance = $.extend(new Konstructor(container), { id, type, container })
 
-    this.instances.push(instance);
+    this.instances.push(instance)
   }
 
   unload(id) {
-    let i = this.instances.length;
+    let i = this.instances.length
+
     while (i--) {
       if (this.instances[i].id === id) {
-        this.instances.splice(i, 1);
-        break;
+        this.instances.splice(i, 1)
+        break
       }
     }
   }
 
   onSectionLoad(e) {
-    const container = $(`[${SECTION_ID_ATTR}]`, e.target)[0];
+    const container = $(`[${SECTION_ID_ATTR}]`, e.target)[0]
+
     if (container) {
-      this.load(container);
+      this.load(container)
     }
   }
 
   onSectionUnload(e) {
-    const instance = this.getInstanceById(e.detail.sectionId);
+    const instance = this.getInstanceById(e.detail.sectionId)
 
     if (!instance) {
-      return;
+      return
     }
 
-    instance.onUnload(e);
+    instance.onUnload(e)
 
-    this.unload(e.detail.sectionId);
+    this.unload(e.detail.sectionId)
   }
 
   // Generic event is a non section load/unload
   // Simply triggers the appropriate instance method if available
   onGenericEvent(e, func) {
-    const instance = this.getInstanceById(e.detail.sectionId);
+    const instance = this.getInstanceById(e.detail.sectionId)
 
     if (instance && typeof instance[func] === 'function') {
-      instance[func].call(instance, e);
+      instance[func].call(instance, e)
     }
   }
 
   onSelect(e) {
-    this.onGenericEvent(e, 'onSelect');
+    this.onGenericEvent(e, 'onSelect')
   }
 
   onDeselect(e) {
-    this.onGenericEvent(e, 'onDeselect');
+    this.onGenericEvent(e, 'onDeselect')
   }
 
   onReorder(e) {
-    this.onGenericEvent(e, 'onReorder');
+    this.onGenericEvent(e, 'onReorder')
   }
 
   onBlockSelect(e) {
-    this.onGenericEvent(e, 'onBlockSelect');
+    this.onGenericEvent(e, 'onBlockSelect')
   }
 
   onBlockDeselect(e) {
-    this.onGenericEvent(e, 'onBlockDeselect');
+    this.onGenericEvent(e, 'onBlockDeselect')
   }
 
   register(type, constructor) {
     // Need to make sure we're working with actual sections here..
     if (!(constructor.prototype instanceof BaseSection)) {
-      return;
+      return
     }
 
-    this.constructors[type] = constructor;
+    this.constructors[type] = constructor
 
     $(`[${SECTION_TYPE_ATTR}=${type}]`).each((index, container) => {
-      this.load(container, constructor);
-    });
+      this.load(container, constructor)
+    })
   }
 }

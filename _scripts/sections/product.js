@@ -1,5 +1,4 @@
-import $ from 'jquery';
-import BaseSection from './base';
+import BaseSection from './base'
 import ProductDetailForm from '../components/product/productDetailForm'
 import ProductDetailGallery from '../components/product/productDetailGallery'
 

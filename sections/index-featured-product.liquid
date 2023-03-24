@@ -1,0 +1,40 @@
+{% assign product = all_products[section.settings.featured_product] %}
+
+{% if product %}
+  <section
+    data-section-id="{{ section.id }}"
+    data-section-type="collection"
+  >
+    <div class="container">
+      <div class="content-grid">
+        <div class="content-grid__item">
+          {% render 'product-card',
+                      product: product
+          %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+
+{% schema %}
+{
+  "name": "Featured Product",
+  "settings": [
+    {
+      "type": "product",
+      "id": "featured_product",
+      "label": "Product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Product",
+      "settings": {
+        "featured_product": ""
+      }
+    }
+  ]
+}
+{% endschema %}

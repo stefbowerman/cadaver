@@ -1,5 +1,4 @@
-import $ from 'jquery';
-import { compact } from '../../core/utils';
+import { compact } from '../../core/utils'
 
 /**
  * Variant Selection scripts

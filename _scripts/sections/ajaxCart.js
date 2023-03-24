@@ -1,5 +1,4 @@
-import $ from 'jquery';
-import BaseSection from './base';
+import BaseSection from './base'
 import AJAXFormManager, { events } from '../core/ajaxFormManager'
 import { getCart } from '../core/cartAPI'
 import { getQueryParams } from '../core/utils'
@@ -8,8 +7,6 @@ import AJAXCart from '../components/ajaxCart'
 const selectors = {
   ajaxCart: '[data-ajax-cart]'
 }
-
-const $window = $(window)
 
 export default class AJAXCartSection extends BaseSection {
   constructor(container) {
@@ -24,8 +21,8 @@ export default class AJAXCartSection extends BaseSection {
       changeFail: e => this.ajaxCart.onChangeFail(e.description)
     };
 
-    $window.on(events.ADD_SUCCESS, this.callbacks.changeSuccess);
-    $window.on(events.ADD_FAIL, this.callbacks.changeFail);
+    $(window).on(events.ADD_SUCCESS, this.callbacks.changeSuccess)
+    $(window).on(events.ADD_FAIL, this.callbacks.changeFail)
 
     getCart().then(cart => {
       this.ajaxCart.render(cart)
@@ -38,24 +35,25 @@ export default class AJAXCartSection extends BaseSection {
   }
 
   open() {
-    this.ajaxCart.open();
+    this.ajaxCart.open()
   }
 
   close() {
-    this.ajaxCart.close();
+    this.ajaxCart.close()
   }
 
   onSelect() {
-    this.open();
+    this.open()
   }
 
   onDeselect() {
-    this.close();
+    this.close()
   }
 
   onUnload() {
     this.ajaxCart.destroy()
-    $window.off(events.ADD_SUCCESS, this.callbacks.changeSuccess)
-    $window.off(events.ADD_FAIL, this.callbacks.changeFail)    
+
+    $(window).off(events.ADD_SUCCESS, this.callbacks.changeSuccess)
+    $(window).off(events.ADD_FAIL, this.callbacks.changeFail)    
   }
 }

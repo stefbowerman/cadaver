@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { changeLineItemQuantity } from '../core/cartAPI'
 
 const selectors = {
@@ -7,7 +6,6 @@ const selectors = {
   close: '[data-close]',
   item: '[data-item]',
   itemRemove: '[data-item-remove]',
-  bodyTemplate: '[data-ajax-cart-body-template]',
   toggle: '[data-ajax-cart-toggle]'
 }
 
@@ -35,22 +33,22 @@ export default class AJAXCart {
 
     this.callbacks = {
       bodyToggleClick: this.onToggleClick.bind(this),
-      bodyCloseClick: this.onCloseClick.bind(this)
+      bodyCloseClick: this.onCloseClick.bind(this),
+      itemRemoveClick: this.onItemRemoveClick.bind(this)
     }      
 
     this.$el = $(el)
     this.$body = $(selectors.body, this.$el)
     this.$totalPrice = $(selectors.totalPrice, this.$el)
-    this.$bodyTemplate = $(selectors.bodyTemplate)
 
-    this.$el.on(events.CLICK, selectors.itemRemove, this.onItemRemoveClick.bind(this))
+    this.$el.on(events.CLICK, selectors.itemRemove, this.callbacks.itemRemoveClick)
     $body.on(events.CLICK, selectors.toggle, this.callbacks.bodyToggleClick)
     $body.on(events.CLICK, selectors.close, this.callbacks.bodyCloseClick)
   }
 
   destroy() {
-    $body.on(events.CLICK, selectors.toggle, this.callbacks.bodyToggleClick)
-    $body.on(events.CLICK, selectors.close, this.callbacks.bodyCloseClick)
+    $body.off(events.CLICK, selectors.toggle, this.callbacks.bodyToggleClick)
+    $body.off(events.CLICK, selectors.close, this.callbacks.bodyCloseClick)
   }
 
   bodyTemplate(cart) {
@@ -61,7 +59,7 @@ export default class AJAXCart {
         return `
           <div class="ajax-cart__item" data-key="${key}" data-qty="${quantity}" data-item>
             <div class="ajax-cart__item-image">
-              <img src="${imageV2.url}" />
+              <img src="${imageV2.url}" alt="${imageV2.alt}" height="${imageV2.height}" width="${imageV2.width}" />
             </div>
             <div class="ajax-cart__item-info">
               <h4>${product_title}</h4>
@@ -191,6 +189,7 @@ export default class AJAXCart {
           // We only need to remove the deleted item and re-render the price
           $el.slideUp({
             duration: 400,
+            easing: 'easeOutCubic',
             start: () => {
               this.render(cart, 'price');
             },

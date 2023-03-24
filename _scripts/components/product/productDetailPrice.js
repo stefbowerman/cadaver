@@ -1,4 +1,3 @@
-import $ from 'jquery'
 import { formatMoney, stripZeroCents } from '../../core/currency'
 
 const selectors = {

@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 /**
  * Animation Helper Functions / constants
  * -----------------------------------------------------------------------------
@@ -69,9 +67,11 @@ export const easings = {
 */
 export function getTransitionTimingDuration(key) {
   let k = 'base';
+
   if (transitionTimingDurations.hasOwnProperty(key)) {
     k = key;
   }
+  
   return transitionTimingDurations[k];
 }
 
@@ -84,9 +84,11 @@ export function getTransitionTimingDuration(key) {
 */
 export function getTransitionTimingFunction(key) {
   let k = 'base';
+
   if (transitionTimingFunctions.hasOwnProperty(key)) {
     k = key;
   }
+
   return transitionTimingFunctions[k];
 }
 

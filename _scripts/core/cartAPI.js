@@ -1,6 +1,5 @@
-import $ from 'jquery';
-import { formatMoney } from './currency';
-import { getSizedImageUrl } from './image';
+import { formatMoney } from './currency'
+import { getSizedImageUrl } from './image'
 
 /**
  * Formats the cart object to be consumed by the handlebars template

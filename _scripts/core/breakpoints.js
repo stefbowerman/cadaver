@@ -1,5 +1,4 @@
-import $ from 'jquery';
-import { throttle } from 'throttle-debounce';
+import { throttle } from 'throttle-debounce'
 
 /**
  * Breakpoint Helper Functions / constants
@@ -9,8 +8,8 @@ import { throttle } from 'throttle-debounce';
  *
  */
 
-const $window = $(window);
-let cachedWindowWidth = $window.width();
+const $window = $(window)
+let cachedWindowWidth = window.innerWidth
 
 // Match those set in variables.scss
 const breakpointMinWidths = {
@@ -21,11 +20,11 @@ const breakpointMinWidths = {
   xl: 1200,
   xxl: 1480,
   xxxl: 1800,
-};
+}
 
 const events = {
   BREAKPOINT_CHANGE: 'breakpointChange',
-};
+}
 
 /**
  * Get one of the widths stored in the variable defined above
@@ -51,7 +50,7 @@ export function getBreakpointMinWidth(key) {
  * @return {undefined|string} foundKey
  */
 export function getBreakpointMinWidthKeyForWidth(w) {
-  const width = w || $window.width();
+  const width = w || window.innerWidth
   
   let foundKey;
 
@@ -68,21 +67,23 @@ export function getBreakpointMinWidthKeyForWidth(w) {
  * Triggers a window event when a breakpoint is crossed, passing the new minimum breakpoint width key as an event parameter
  *
  */
-export function onResize() {
-  const newWindowWidth = $window.width();
+function onResize() {
+  const newWindowWidth = window.innerWidth
 
   $.each(breakpointMinWidths, (k, bpMinWidth) => { // eslint-disable-line consistent-return
     if ((newWindowWidth >= bpMinWidth && cachedWindowWidth < bpMinWidth) || (cachedWindowWidth >= bpMinWidth && newWindowWidth < bpMinWidth)) {
-      const bpMinWidthKey = getBreakpointMinWidthKeyForWidth(newWindowWidth);
-      const e = $.Event(events.BREAKPOINT_CHANGE, { bpMinWidthKey });
-      $window.trigger(e);
-      return false;
+      const bpMinWidthKey = getBreakpointMinWidthKeyForWidth(newWindowWidth)
+      
+      const e = $.Event(events.BREAKPOINT_CHANGE, { bpMinWidthKey })
+      $window.trigger(e)
+
+      return false
     }
   });
 
-  cachedWindowWidth = $window.width();
+  cachedWindowWidth = window.innerWidth;
 }
 
 export function initialize() {
-  $window.on('resize', throttle(20, onResize));
+  window.addEventListener('resize', throttle(50, onResize))
 }

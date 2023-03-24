@@ -12,6 +12,14 @@
 {% endcomment -%}
 
 {% if product %}
+  {%- capture alt_text %}
+    {% if product.featured_image.alt %}
+      {{ product.featured_image.alt }}
+    {% else %}
+      "{{ product.title }}" Featured Image
+    {% endif %}
+  {%- endcapture %}
+
   <div class="product-card{% if product.available == false %} product-card--sold-out{% endif %}" data-product-card>
     <div class="product-card__contents">
       {% if product.featured_image %}
@@ -27,7 +35,7 @@
                               {{ product.featured_image | image_url: width: '1000' }} 1000w,
                               {{ product.featured_image | image_url: width: '1200' }} 1200w"
                 data-sizes="auto"                             
-                alt="{{ product.featured_image.alt | escape }}"
+                alt="{{ alt_text | escape }}"
                 height="{{ product.featured_image.height }}"
                 width="{{ product.featured_image.width }}"
                 class="lazyload"

@@ -75,7 +75,7 @@
           {% if item.variant.option2 != blank %}, {{ item.variant.option2 | json }}{% endif %}
           {% if item.variant.option3 != blank %}, {{ item.variant.option3 | json }}{% endif %}
         ],
-        "isAddable": {{ is_addable | json }}
+        "is_addable": {{ is_addable | json }}
       }{% unless forloop.last %},{% endunless %}
     {% endfor %}
   ]

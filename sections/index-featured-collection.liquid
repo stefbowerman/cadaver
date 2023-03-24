@@ -1,0 +1,44 @@
+{% assign featured_collection = collections[section.settings.featured_collection] %}
+{% paginate featured_collection.products by 500 %}
+
+  <section
+    data-section-id="{{ section.id }}"
+    data-section-type="collection"
+  >
+    <div class="container">
+      {% if featured_collection.products.size > 0 %}   
+        <div class="content-grid">
+          {% for product in featured_collection.products %}
+            <div class="content-grid__item">
+              {% render 'product-card',
+                         product: product
+              %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "featured_collection",
+      "label": "Collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection",
+      "settings": {
+        "featured_collection": "frontpage"
+      }
+    }
+  ]
+}
+{% endschema %}

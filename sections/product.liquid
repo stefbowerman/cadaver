@@ -2,18 +2,20 @@
 {%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
 
 <div data-section-id="{{ section.id }}" data-section-type="product" itemscope itemtype="http://schema.org/Product">
-  <div class="layout-content-wrapper">
-    <meta itemprop="name" content="{{ product.title | escape }}">
-    <meta itemprop="url" content="{{ shop.url }}{{ current_variant.url }}">
-    <meta itemprop="brand" content="{{ product.vendor }}">
-    <meta itemprop="image" content="{{ featured_image | img_url: '600x600' }}">
-    <meta itemprop="description" content="{{ product.description | strip_html | escape }}">
+  <meta itemprop="name" content="{{ product.title | escape }}">
+  <meta itemprop="url" content="{{ shop.url }}{{ current_variant.url }}">
+  <meta itemprop="brand" content="{{ product.vendor }}">
+  <meta itemprop="image" content="{{ featured_image | img_url: '600x600' }}">
+  <meta itemprop="description" content="{{ product.description | strip_html | escape }}">
 
-    {% render 'product-detail-form',
-               product: product,
-               current_variant: current_variant
-    %}
-  </div>
+
+  <div class="product-detail">
+    <div class="container">
+      {% render 'product-detail-gallery', product: product %}
+  
+      {% render 'product-detail-form', product: product, current_variant: current_variant %}
+    </div>
+  </div>    
 </div>
 
 {% schema %}

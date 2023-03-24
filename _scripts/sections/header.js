@@ -1,4 +1,3 @@
-import $ from 'jquery'
 import BaseSection from './base'
 import { events as AJAXCartEvents } from '../components/ajaxCart'
 
@@ -18,7 +17,13 @@ export default class HeaderSection extends BaseSection {
     this.$cartCount = $(selectors.cartCount, this.$container)
     this.$cartToggle = $(selectors.cartToggle, this.$container)
 
-    $(window).on(AJAXCartEvents.RENDER, this.onAJAXCartRender.bind(this))
+    this.onAJAXCartRender = this.onAJAXCartRender.bind(this)
+
+    window.addEventListener(AJAXCartEvents.RENDER, this.onAJAXCartRender)
+  }
+
+  onUnload() {
+    window.removeEventListener(AJAXCartEvents.RENDER, this.onAJAXCartRender)
   }
 
   onAJAXCartRender({ cart }) {

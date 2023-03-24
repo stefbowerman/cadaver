@@ -1,4 +1,3 @@
-import $ from 'jquery'
 import { events as AJAXFormManagerEvents } from '../../core/ajaxFormManager'
 import Variants from './variants'
 import ProductDetailPrice from './productDetailPrice'
@@ -43,8 +42,8 @@ export default class ProductDetailForm {
     this.$singleOptionSelectors = $(selectors.singleOptionSelector, this.$el);
     this.$variantOptionValueList = $(selectors.variantOptionValueList, this.$el); // Alternate UI that takes the place of a single option selector (could be swatches, dots, buttons, whatever..)    
     this.$productDetailPrice = $(selectors.productDetailPrice, this.$el);
-    this.$addToCartBtn = $(selectors.addToCartBtn, this.$container);
-    this.$addToCartBtnText = $(selectors.addToCartText, this.$container); // Text inside the add to cart button
+    this.$addToCartBtn = $(selectors.addToCartBtn, this.$el);
+    this.$addToCartBtnText = $(selectors.addToCartText, this.$el); // Text inside the add to cart button
     this.defaultButtonText = 'Add to Cart'; // this.$addToCartBtnText.text()
 
     this.product = JSON.parse($(selectors.productJSON, this.$el).html())

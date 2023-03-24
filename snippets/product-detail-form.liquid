@@ -49,146 +49,146 @@
 %}
 
 <div class="product-detail-form" data-product-detail-form>
-  <div class="container">
-    {% render 'product-detail-gallery', product: product %}
+  <h1 class="pdf-title">{{ product.title }}</h1>
 
-    <div>
-      <h1 class="pdf-title">{{ product.title }}</h1>
-
-      <div class="pdf-price">
-        {% render 'product-detail-price',
-                   product: product,
-                   current_variant: current_variant
-        %}
-      </div>
-
-      <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-        <meta itemprop="priceCurrency" content="{{ shop.currency }}">
-        <meta itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}">
-        <link itemprop="availability" href="http://schema.org/{% if current_variant.available %}InStock{% else %}OutOfStock{% endif %}">
-
-        {% form 'product', product, data-add-to-cart-form: true %} 
-
-          {% if product.available %}
-            {% unless product.has_only_default_variant %}
-              {% for option in product.options_with_values %}
-
-                {%- liquid
-                  assign option_has_single_value = false
-                  assign can_show_sold_out_ui_for_option = false
-
-                  if option.values.size == 1
-                    assign option_has_single_value = true
-                  endif
-
-                  if product.options.size == 1
-                    assign can_show_sold_out_ui_for_option = true
-                  elsif product.options.size == 2 and option.position == 2 and product.options_with_values[0].values.size == 1
-                    assign can_show_sold_out_ui_for_option = true
-                  endif
-                -%}               
-
-                {% comment %} Don't show the selector if there's only one value {% endcomment %}
-                <div class="selector-wrapper form-group js" {% if option_has_single_value %}style="display: none"{% endif %}>
-                  <label for="SingleOptionSelector-{{ forloop.index0 }}">
-                    {{ option.name }}
-                  </label>
-
-                  <select
-                    id="SingleOptionSelector-{{ forloop.index0 }}"
-                    class="form-control"
-                    data-single-option-selector
-                    data-index="option{{ option.position }}"
-                    style="display: none">
-                    {% for value in option.values %}
-                      <option
-                        value="{{ value | escape }}"
-                        {% if option.selected_value == value %}selected="selected"{% endif %}>
-                          {{ value }}
-                      </option>
-                    {% endfor %}
-                  </select>
-
-                  <div
-                    class="option-value-list"
-                    data-option-position="{{ option.position }}"
-                    data-variant-option-value-list
-                  >
-                    {% for value in option.values %}
-
-                      {% comment %} If the product only has one option (like size) then we can show values as sold out by checking the variant for that option {% endcomment %}
-                      {%- liquid
-                        assign is_disabled = false
-                        assign is_selected = false
-
-                        if can_show_sold_out_ui_for_option
-                          for v in product.variants
-                            assign variant_option_prop = 'option' | append: option.position
-
-                            if v[variant_option_prop] == value and v.available == false
-                              assign is_disabled = true
-                            endif
-                          endfor
-                        endif
-
-                        if is_color and forloop.index0 == 0
-                          assign is_selected = true
-                        endif
-                      -%}
-
-                      <a
-                        href="#"
-                        class="option-value{% if is_disabled %} is-disabled {% elsif is_selected %} is-selected{% endif %}" data-variant-option-value="{{ value }}"
-                        {% if is_disabled %} disabled="disabled" aria-disabled="true"{% endif %}
-                      >
-                        {{ value }}
-                      </a>
-                    {% endfor %}
-                  </div>
-                </div>
-              {% endfor %}
-            {% endunless %}
-
-            <label class="visually-hidden" for="no-js-variant-select">Select Variant</label>
-            <select name="id" class="no-js" id="no-js-variant-select" data-product-select>
-              {% for variant in product.variants %}
-                <option
-                  {% if variant == current_variant %}selected="selected"{% endif %}
-                  {% unless variant.available %}disabled="disabled"{% endunless %}
-                  value="{{ variant.id }}">
-                    {{ variant.title }}
-                </option>
-              {% endfor %}
-            </select>
-
-            <input type="hidden" value="1" name="quantity" />
-
-            <button
-              type="submit"
-              name="add"
-              class="btn"
-              data-add-to-cart-btn
-              {% if selection_required %}disabled="disabled"{% endif %}>
-              <span data-add-to-cart-text>
-                {% if selection_required %}
-                  {{ selection_required_text }}
-                {% else %}
-                  Add To Cart
-                {% endif %}
-              </span>
-            </button>
-          {% else %}
-            <span>Sold out</span>
-          {% endif %}
-        {% endform %}
-
-      </div>
-    </div>
+  <div class="pdf-price">
+    {% render 'product-detail-price',
+                product: product,
+                current_variant: current_variant
+    %}
   </div>
 
-  {% unless product == empty %}
+  <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+    <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+    <meta itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}">
+    <link itemprop="availability" href="http://schema.org/{% if current_variant.available %}InStock{% else %}OutOfStock{% endif %}">
+
+    {% form 'product', product, data-add-to-cart-form: true %} 
+
+      {% if product.available %}
+        {% unless product.has_only_default_variant %}
+          {% for option in product.options_with_values %}
+
+            {%- liquid
+              assign option_has_single_value = false
+              assign can_show_sold_out_ui_for_option = false
+
+              if option.values.size == 1
+                assign option_has_single_value = true
+              endif
+
+              if product.options.size == 1
+                assign can_show_sold_out_ui_for_option = true
+              elsif product.options.size == 2 and option.position == 2 and product.options_with_values[0].values.size == 1
+                assign can_show_sold_out_ui_for_option = true
+              endif
+            -%}               
+
+            {% comment %} Don't show the selector if there's only one value {% endcomment %}
+            <div class="selector-wrapper form-group js" {% if option_has_single_value %}style="display: none"{% endif %}>
+              <label for="SingleOptionSelector-{{ forloop.index0 }}">
+                {{ option.name }}
+              </label>
+
+              <select
+                id="SingleOptionSelector-{{ forloop.index0 }}"
+                class="form-control"
+                data-single-option-selector
+                data-index="option{{ option.position }}"
+                style="display: none">
+                {% for value in option.values %}
+                  <option
+                    value="{{ value | escape }}"
+                    {% if option.selected_value == value %}selected="selected"{% endif %}>
+                      {{ value }}
+                  </option>
+                {% endfor %}
+              </select>
+
+              <div
+                class="option-value-list"
+                data-option-position="{{ option.position }}"
+                data-variant-option-value-list
+              >
+                {% for value in option.values %}
+
+                  {% comment %} If the product only has one option (like size) then we can show values as sold out by checking the variant for that option {% endcomment %}
+                  {%- liquid
+                    assign is_disabled = false
+                    assign is_selected = false
+
+                    if can_show_sold_out_ui_for_option
+                      for v in product.variants
+                        assign variant_option_prop = 'option' | append: option.position
+
+                        if v[variant_option_prop] == value and v.available == false
+                          assign is_disabled = true
+                        endif
+                      endfor
+                    endif
+
+                    if is_color and forloop.index0 == 0
+                      assign is_selected = true
+                    endif
+                  -%}
+
+                  <span
+                    href="#"
+                    class="option-value{% if is_disabled %} is-disabled {% elsif is_selected %} is-selected{% endif %}" data-variant-option-value="{{ value }}"
+                    {% if is_disabled %} disabled="disabled" aria-disabled="true"{% endif %}
+                    role="button"
+                  >
+                    {{ value }}
+                  </span>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        {% endunless %}
+
+        <label class="visually-hidden" for="no-js-variant-select">Select Variant</label>
+        <select name="id" class="no-js" id="no-js-variant-select" data-product-select>
+          {% for variant in product.variants %}
+            <option
+              {% if variant == current_variant %}selected="selected"{% endif %}
+              {% unless variant.available %}disabled="disabled"{% endunless %}
+              value="{{ variant.id }}">
+                {{ variant.title }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <input type="hidden" value="1" name="quantity" />
+
+        <button
+          type="submit"
+          name="add"
+          class="btn"
+          data-add-to-cart-btn
+          {% if selection_required %}disabled="disabled"{% endif %}>
+          <span data-add-to-cart-text>
+            {% if selection_required %}
+              {{ selection_required_text }}
+            {% else %}
+              Add To Cart
+            {% endif %}
+          </span>
+        </button>
+      {% else %}
+        <span>Sold out</span>
+      {% endif %}
+    {% endform %}
+
+    {% if product.description != blank %}
+      <div>
+        {{ product.description }}
+      </div>
+    {% endif %}
+  </div>
+
+    {% unless product == empty %}
     <script type="application/json" data-product-json>
       {% render 'product-json', product: product %}
     </script>
-  {% endunless %}  
+  {% endunless %}
 </div>
