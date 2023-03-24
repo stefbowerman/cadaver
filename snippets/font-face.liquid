@@ -1,5 +1,6 @@
-{% comment %}
-<style>  
+<style>
+  {% capture content %}
+  {% comment %}
   @font-face {
     font-family: 'Font Name';
       src: url("{{ 'file-name.woff' | asset_url }}") format('woff'),
@@ -7,5 +8,8 @@
     font-weight: 400;
     font-style: normal;
   }
+  {% endcomment %}
+  {% endcapture %}
+
+  {{ content | strip_newlines | strip }}
 </style>
-{% endcomment %}

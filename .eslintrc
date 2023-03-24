@@ -2,7 +2,31 @@
 
 {
   "parser": "@babel/eslint-parser",
-  "rules": {},
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "app": "readonly",
+    "$": "readonly",
+    "jQuery": "readonly"
+  },
+  "rules": {
+    "no-unused-vars": ["warn", {
+      "args": "none"
+    }],
+    "no-useless-escape": "off",
+    "no-console": ["warn", {
+      "allow": ["warn", "error"]
+    }],
+    "no-undef": "error",
+    "brace-style": ["warn", "stroustrup"],
+    "arrow-body-style": "off",
+    "arrow-parens": [0, "as-needed"],
+    "no-unused-expressions": ["error", {
+      "allowShortCircuit": true,
+      "allowTernary": true
+    }]   
+  },
   "parserOptions": {
     "requireConfigFile": false
   }

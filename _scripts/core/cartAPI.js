@@ -13,12 +13,12 @@ export const formatCart = (cart) => {
   }
 
   // Make adjustments to the cart object contents before we pass it off to the handlebars template
-  cart.total_price = formatMoney(cart.total_price, theme.moneyFormat);
+  cart.total_price = formatMoney(cart.total_price, app.moneyFormat);
 
   cart.items.map((item) => {
     item.image = getSizedImageUrl(item.image, '500x');
     item.imageV2.url = getSizedImageUrl(item.imageV2.url, '500x');    
-    item.price = formatMoney(item.price, theme.moneyFormat);
+    item.price = formatMoney(item.price, app.moneyFormat);
     item.multiple_quantities = item.quantity > 1;
 
     // Adjust the item's variant options to add "name" and "value" properties

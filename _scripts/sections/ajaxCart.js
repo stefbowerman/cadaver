@@ -29,13 +29,15 @@ export default class AJAXCartSection extends BaseSection {
 
       // If redirected from the cart, show the ajax cart after a short delay
       if (getQueryParams().cart) {
-        this.open()
+        this.open({ delay: true })
       }        
     })
   }
 
-  open() {
-    this.ajaxCart.open()
+  open({ delay = false }) {
+    setTimeout(() => {
+      this.ajaxCart.open()
+    }, (delay ? 500 : 0))
   }
 
   close() {

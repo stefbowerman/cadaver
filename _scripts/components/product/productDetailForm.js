@@ -107,16 +107,16 @@ export default class ProductDetailForm {
     if (variant) {
       if (variant.available) {
         btnDisabled = false;
-        btnText = theme.strings.addToCart;
+        btnText = app.strings.addToCart;
       }
       else {
         btnDisabled = true;
-        btnText = theme.strings.soldOut;
+        btnText = app.strings.soldOut;
       }      
     }
     else {
       btnDisabled = true;
-      btnText = theme.strings.unavailable;
+      btnText = app.strings.unavailable;
     }
 
     this.$addToCartBtn.prop('disabled', btnDisabled);

@@ -1,12 +1,12 @@
 import BaseSection from './base'
 
-const selectors = {
+// const selectors = {
 
-}
+// }
 
-const classes = {
+// const classes = {
 
-}
+// }
 
 export default class FooterSection extends BaseSection {
   constructor(container) {

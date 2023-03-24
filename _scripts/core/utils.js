@@ -255,7 +255,8 @@ export function userAgentBodyClass() {
   if (ua.indexOf('safari') != -1) { 
     if (ua.indexOf('chrome') > -1) {
       // Chrome
-    } else {
+    }
+    else {
       classes += ' ua-safari';
     }
   }
@@ -410,7 +411,7 @@ export function isExternal(url) {
 }
 
 export function isTouch() {
-  if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
+  if (('ontouchstart' in window)) {
     return true
   }
   

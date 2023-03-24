@@ -9,7 +9,8 @@ import {
   userAgentBodyClass,
   isThemeEditor,
   setViewportHeightProperty,
-  targetBlankExternalLinks
+  targetBlankExternalLinks,
+  getQueryParams
 } from './core/utils'
 
 // Renderers
@@ -17,6 +18,7 @@ import BaseRenderer from './renderers/base'
 import IndexRenderer from './renderers/index'
 import CollectionRenderer from './renderers/collection'
 import ProductRenderer from './renderers/product'
+import CartRenderer from './renderers/cart'
 import PageRenderer from './renderers/page'
 
 // Transitions
@@ -27,6 +29,10 @@ import SectionManager from './core/sectionManager'
 import HeaderSection from './sections/header'
 import FooterSection from './sections/footer'
 import AJAXCartSection from './sections/ajaxCart'
+
+// Use this to expose anything needed throughout the rest of the app
+window.app = window.app || {}
+window.app.taxi = null;
 
 (($) => {
   if (typeof $ === undefined) {
@@ -63,10 +69,10 @@ import AJAXCartSection from './sections/ajaxCart'
       collection: CollectionRenderer,
       product: ProductRenderer,
       page: PageRenderer,
+      cart: CartRenderer,
       // All of these use the default renderer for now
       password: BaseRenderer,
       blog: BaseRenderer,
-      cart: BaseRenderer,
       'list-collections': BaseRenderer,
       search: BaseRenderer
     },
@@ -100,15 +106,14 @@ import AJAXCartSection from './sections/ajaxCart'
 
   // This event is sent everytime the `done()` method is called in the `onEnter()` method of a transition
   taxi.on('NAVIGATE_END', ({ to, from, trigger }) => {
-    const view = to.content?.dataset.taxiView
-
-    if (view === 'cart') {
-      ajaxCart.open();
+    if (getQueryParams().cart) {
+      ajaxCart.open({ delay: true })
     }
 
     targetBlankExternalLinks();
   })
 
+  window.app.taxi = taxi
   // END Taxi
 
   // a11y
